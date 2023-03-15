@@ -1,0 +1,1 @@
+recipes-tools/crosvm-test/files/** filter=lfs diff=lfs merge=lfs -text
