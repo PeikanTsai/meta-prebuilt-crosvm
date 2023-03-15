@@ -46,10 +46,11 @@ $ cd poky
 $ source oe-init-build-env
 ```
 
-- Uncomment `qemuarm64` in `conf/local.conf`
-- Add bblayer
+- Add bblayer and patch local.conf
 ```
 $ bitbake-layers add-layer ../../meta-prebuilt-crosvm
+$ sed -i 's/#MACHINE ?= "qemuarm64"/MACHINE ?= "qemuarm64"/' conf/local.conf
+$ echo 'IMAGE_INSTALL:append = " bash crosvm-test screen"' >> conf/local.conf
 ```
 - Build
 ```
@@ -62,10 +63,26 @@ $ runqemu qemuarm64 nographic novga qemuparams="-m 2048 -machine virt,virtualiza
 - Launch first guest VM in qemu console
 ```
 $ cd /usr/share
-$ mount -t tmpfs tmpfs /var
 $ mkdir -p /var/empty
-./crosvm run -r rootfs.ext4 Image \
+$ crosvm run -r rootfs.ext4 Image \
 --cpus num-cores=1 --mem size=1024 \
 --net tap-name=crosvm_tap \
 --serial type=stdout,hardware=virtio-console,console,stdin
 ```
+- Launch multiple VMs by using screen
+```
+$ echo "escape ^bb" > ~/.screenrc
+$ screen
+$ crosvm run -r rootfs.ext4 Image \
+--cpus num-cores=1 --mem size=512 \
+--serial type=stdout,hardware=virtio-console,console,stdin \
+-s /var/tmp/
+
+# Ctrl + B + c create new session
+
+$ crosvm run -r rootfs.ext4 Image \
+--cpus num-cores=1 --mem size=512 \
+--serial type=stdout,hardware=virtio-console,console,stdin \
+-s /var/tmp/
+```
+
