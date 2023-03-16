@@ -60,29 +60,38 @@ $ bitbake core-image-full-cmdline
 ```
 $ runqemu qemuarm64 nographic novga qemuparams="-m 2048 -machine virt,virtualization=on,gic-version=3"
 ```
-- Launch first guest VM in qemu console
-```
-$ cd /usr/share
-$ mkdir -p /var/empty
-$ crosvm run -r rootfs.ext4 Image \
---cpus num-cores=1 --mem size=1024 \
---net tap-name=crosvm_tap \
---serial type=stdout,hardware=virtio-console,console,stdin
-```
-- Launch multiple VMs by using screen
+## Launch multiple VMs by using screen
 ```
 $ echo "escape ^bb" > ~/.screenrc
 $ screen
-$ crosvm run -r rootfs.ext4 Image \
+$ crosvm run -r /usr/share/rootfs.ext4 /usr/share/Image \
 --cpus num-cores=1 --mem size=512 \
 --serial type=stdout,hardware=virtio-console,console,stdin \
 -s /var/tmp/
 
-# Ctrl + B + c create new session
+# Ctrl + b + c create new session
 
-$ crosvm run -r rootfs.ext4 Image \
+$ crosvm run -r /usr/share/rootfs.ext4 /usr/share/Image \
 --cpus num-cores=1 --mem size=512 \
 --serial type=stdout,hardware=virtio-console,console,stdin \
 -s /var/tmp/
 ```
-
+## Launch VM with net configutaion
+- Host console
+```
+$ mkdir -p /var/empty
+$ setup_network
+$ crosvm run -r /usr/share/rootfs.ext4 /usr/share/Image \
+--cpus num-cores=1 --mem size=512 \
+--serial type=stdout,hardware=virtio-console,console,stdin \
+--tap-name crosvm_tap \
+-s /var/run/
+```
+- VM console
+```
+$ ip addr add 192.168.10.2/24 dev eth0
+$ ip link set eth0 up
+$ ip route add default via 192.168.10.1
+$ echo "nameserver 8.8.8.8" | tee /etc/resolv.conf
+$ ping 8.8.8.8
+```
