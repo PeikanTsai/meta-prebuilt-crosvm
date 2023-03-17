@@ -50,7 +50,7 @@ $ source oe-init-build-env
 ```
 $ bitbake-layers add-layer ../../meta-prebuilt-crosvm
 $ sed -i 's/#MACHINE ?= "qemuarm64"/MACHINE ?= "qemuarm64"/' conf/local.conf
-$ echo 'IMAGE_INSTALL:append = " bash crosvm-test screen"' >> conf/local.conf
+$ echo 'IMAGE_INSTALL:append = " bash crosvm-test screen strace"' >> conf/local.conf
 ```
 - Build
 ```
