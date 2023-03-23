@@ -12,6 +12,7 @@ RRECOMMENDS:${PN} += " \
 	kernel-module-ipt-masquerade \
 	kernel-module-xt-masquerade \
 	kernel-module-xt-state \
+	kernel-module-vhost-net \
 "
 
 KERNEL_MODULE_AUTOLOAD += " tun nf_nat"
